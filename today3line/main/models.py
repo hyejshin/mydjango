@@ -8,6 +8,7 @@ class ParsedData(models.Model):
     line1 = models.TextField(default = '')
     line2 = models.TextField(default = '')
     line3 = models.TextField(default = '')
+    line4
 
     def __str__(self):
         return str(self.url)
