@@ -30,41 +30,52 @@
         var url;
         var timeout_time = 1000;
 
-        
-        def update(req):
-            if req.method == 'POST':
-                response = dict()
-
-            if(req.POST.get('first_time') == 'true'):
-                urls = get_list()
-                response['url_list'] = json.dumps(urls)
-
-                return HttpResponse(json.dumps(response), content_type='application/json')
-            else:
-                return HttpResponseBadRequest()
-
+        function update() {
+            console.log($(".card").length)
+            console.log($(".card").length === index)
+            if (typeof url_list === 'undefined') {
+                url = '';
+            } else {
+                if (index < url_list.length) url = url_list[index];
+                else {
+                    index += 1;
+                    return;
+                }
+            }
             $.ajax({
                 url: "/update/",
                 type: "POST",
                 timeout: timeout_time,
                 data: {
-                   csrfmiddlewaretoken: "{{ csrf_token }}",
-                   first_time: first_time,
-                   url: url,
+                    csrfmiddlewaretoken: "{{ csrf_token }}",
+                    first_time: first_time,
+                    url: url,
                 },
                 dataType: "json",
                 success: function(json) {
-                    if(first_time){
+                    if (first_time) {
                         url_list = JSON.parse(json.url_list);
-                    }else{
-                        
+                    } else if (typeof json.title !== 'undefined' && json.title.length !== 0 && $(".card").length === index) {
+                        console.log(index);
+                        card = $($("#new_card").html());
+                        card.find("#card_name").text(json.title);
+                        card.find("#card_first_image").attr("src", json.image_url);
+                        card.find("#card_link").attr("href", json.url);
+                        card.find("#card_line1").text(json.line1);
+                        card.find("#card_line2").text(json.line2);
+                        card.find("#card_line3").text(json.line3);
+                        $("#card_cols").append(card);
+                        index += 1;
                     }
+                    console.log(json);
+                    console.log("OK");
                 }
             });
+        }
 
         function loop() {
             console.log("looping");
-            //update();
+            update();
             first_time = false;
             if (typeof url_list === 'undefined') {
                 first_time = true;
@@ -75,14 +86,12 @@
                 $("#done-bar").attr("max", url_list.length);
             } else $("#loader").empty();
         };
-        
+
         $(document).ready(function() {
-            var card = $($("#new_card").html());
-            $("#card_cols").append(card);
-            // first_time = true;
-            // index = 0;
-            // $("#loader").append("<progress value=\"0\" max=\"100\" id=\"done-bar\" class=\"progress progress-info\"></progress>");
-            // loop();
+            first_time = true;
+            index = 0;
+            $("#loader").append("<progress value=\"0\" max=\"100\" id=\"done-bar\" class=\"progress progress-info\"></progress>");
+            loop();
         });
     </script>
     <style>

@@ -8,10 +8,7 @@ from main.parsecast import parse_link, get_list
 from main.models import ParsedData
 
 def index(req):
-   return HttpResponse('HelloWorld')
-
-# def index(req):
-#     return render(req, 'main/index.html', {'posts': })
+    return render(req, 'main/index.html')
 
 def update(req):
     if req.method == 'POST':

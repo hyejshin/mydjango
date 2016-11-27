@@ -54,6 +54,5 @@ def parse_link(url):
 
 if __name__ == '__main__':
     url_list = get_list()
-    #print(url_list)
     for url in url_list:
         print(parse_link(url))
